@@ -40,12 +40,12 @@ export function deriveReactions(state: StoryState): ReactionsViewModel {
       tooltipText: state.endingPersisted
         ? state.eyesCancelTried
           ? '재직 중인 사용자는 확인을 취소할 수 없습니다.'
-          : `외 ${SITE_CONFIG.deskNumber - 2}명… 그리고 ${SITE_CONFIG.currentUserName}님이 확인했습니다.`
+          : `알 수 없는 사용자님 외 ${SITE_CONFIG.deskNumber - 2}명… 그리고 ${SITE_CONFIG.currentUserName}님이 확인했습니다.`
         : state.eyesMine
           ? state.eyesTried
             ? '취소는 접수되지 않습니다.'
             : '이미 반응하셨잖아요. 어제.'
-          : `${SITE_CONFIG.currentUserName}_001님, ${SITE_CONFIG.currentUserName}_002님, 외 ${SITE_CONFIG.deskNumber - 4}명… 그리고 당신이 반응했습니다`,
+          : `${SITE_CONFIG.currentUserName}_001님, ${SITE_CONFIG.currentUserName}_002님, 알 수 없는 사용자님 외 ${SITE_CONFIG.deskNumber - 4}명… 그리고 당신이 반응했습니다`,
     },
     umbrella: {
       active: state.umbMine,
