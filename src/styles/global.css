@@ -1,0 +1,44 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: oklch(0.16 0.01 260);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.28 0.01 260);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+a {
+  color: oklch(0.7 0.09 250);
+  text-decoration: none;
+}
+
+a:hover {
+  color: oklch(0.8 0.09 250);
+  text-decoration: underline;
+}
+
+@keyframes omong-blink {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  61%,
+  100% {
+    opacity: 0.2;
+  }
+}
