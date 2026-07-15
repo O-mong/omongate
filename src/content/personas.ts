@@ -68,10 +68,9 @@ export const OH_SEJIN: Persona = {
 }
 
 export const YOON_TAEHO: Persona = {
-  name: '이만순',
-  initials: '이',
+  name: '윤',
+  initials: '태호',
   avatarBg: colors.avatar.yoonTaeho,
-  avatarImage: '/custom/hsim_bg.png',
   avatarFontSize: 14,
 }
 

@@ -45,7 +45,7 @@ Node 20 이상 필요.
 |---|---|
 | 회사 이름, 방문자 호칭, "249" 자리 번호 등 정체성 값 | `src/config/site.ts` |
 | 메시지 사이 간격, 각 연출의 타이밍 | `src/config/timing.ts` |
-| 서버 로고에 거는 깃헙 링크 등 외부 링크 | 프로젝트 루트의 `omongate.conf` (`key=value` 형식. TS 코드 수정 없이 텍스트만 고치면 되지만, **재빌드는 필요**합니다) |
+| 서버 로고에 거는 깃헙 링크, 배포 도메인(`site_url`) | 프로젝트 루트의 `omongate.conf` (`key=value` 형식. TS 코드 수정 없이 텍스트만 고치면 되지만, **재빌드는 필요**합니다) |
 | 등장인물 이름 · 아바타 색 · 아바타 이미지 | `src/content/personas.ts` — `avatarImage`에 이미지 경로를 넣으면 이니셜 대신 사진이 나옵니다 |
 | 채널 라벨 · 주제 · 타이핑 표시줄 문구 | `src/content/channelMeta.ts` |
 | 색상 팔레트 | `src/styles/tokens.ts` |
@@ -56,6 +56,10 @@ Node 20 이상 필요.
 
 이미지(아바타, 깃헙 아이콘 등)는 `public/` 폴더에 넣고 `/파일명.svg`처럼
 루트 기준 경로로 참조하면 됩니다.
+
+`omongate.conf`의 `site_url`을 실제 배포 도메인으로 채워두면, 빌드할 때
+`robots.txt`/`sitemap.xml`이 그 도메인으로 자동 생성됩니다(`dist/`에
+포함). 비워두면 `https://example.com`이 자리표시자로 들어갑니다.
 
 ## 코드 어디서부터 봐야 하나
 
