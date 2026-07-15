@@ -1,162 +1,92 @@
 # omongate
 
-Omong이라는 회사의 채용 공고인 척하는 디스코드 클론 UI. 실제로는 겉보기엔
-평범한 HR 안내가 채널을 넘나들며 조금씩 다른 의미로 읽히게 되는 짧은
-인터랙티브 픽션입니다.
+A Discord clone UI disguised as a job posting from a company called Omong.
+In reality, it is a short interactive fiction in which seemingly ordinary HR
+information gradually takes on different meanings as you move between channels.
 
-## 뭘 볼 수 있나
+## What You Can Explore
 
-왼쪽 채널 목록:
+Channel list on the left:
 
-| 채널 | 내용 |
+| Channel | Content |
 |---|---|
-| `#공지사항` | 채용 공고. 처음엔 그냥 좋은 조건의 채용글로 보입니다. |
-| `#지원서제출` | 실제 지원자들의 대화 스레드. |
-| `#규칙` | 입사자 매뉴얼. 다른 아카이브 채널을 열어볼수록 여기에 주석이 하나씩 붙습니다. |
-| `#archive-2025` / `#archive-2024` / `#archive-2023` / `#archive-2022` / `#archive-2021` | 보관된(퇴사자가 남긴) 채널들. 순서 상관없이 아무거나 먼저 열어도 됩니다. |
-| `#archive-당신` | 위 다섯 채널을 전부 열어야 잠금이 풀립니다. |
+| `#공지사항` | A job posting. At first, it simply looks like a recruitment notice with attractive benefits. |
+| `#지원서제출` | A conversation thread between actual applicants. |
+| `#규칙` | An employee manual. Each time you open another archive channel, a new annotation is added here. |
+| `#archive-2025` / `#archive-2024` / `#archive-2023` / `#archive-2022` / `#archive-2021` | Archived channels left behind by former employees. You can open them in any order. |
+| `#archive-당신` | Unlocks only after you have opened all five archive channels above. |
 
-다섯 개의 archive 채널을 모두 확인하면 `#archive-당신`이 열리고, 그 안의 대화가
-끝나면 사이트 전체가 살짝 다른 상태로 바뀝니다. 어떤 채널을 봤는지, 엔딩까지
-갔는지는 쿠키에 저장되어 새로고침해도 유지됩니다 — 쿠키를 지우면 처음부터
-다시 시작합니다. `ARCHITECTURE.md`의 "영속성" 참고.
+Once you have viewed all five archive channels, `#archive-당신` unlocks. After
+the conversation inside it ends, the entire site shifts into a slightly different
+state. The channels you have viewed and whether you have reached the ending are
+stored in cookies, so your progress remains after refreshing the page. Delete the
+cookies to start over from the beginning. See "Persistence" in `ARCHITECTURE.md`.
 
-데스크톱은 서버 레일 + 채널 목록 + 채팅 + 멤버 목록 4단 레이아웃, 뷰포트가
-좁아지면(768px 기준) 채널 목록 ⇄ 채팅을 오가는 모바일 레이아웃으로 자동
-전환됩니다.
+On desktop, the site uses a four-column layout consisting of a server rail,
+channel list, chat area, and member list. When the viewport becomes narrow
+(below 768px), it automatically switches to a mobile layout that moves between
+the channel list and chat view.
 
-## 실행하기
+## Running the Project
 
 ```bash
 npm install
-npm run dev       # http://localhost:5173 개발 서버
-npm run build     # 타입 체크 + dist/ 프로덕션 빌드
-npm run preview   # 빌드 결과물 로컬 미리보기
+npm run dev       # Development server at http://localhost:5173
+npm run build     # Type checking + production build in dist/
+npm run preview   # Preview the production build locally
 ```
 
-Node 20 이상 필요.
+Requires Node.js 20 or later.
 
-## 커스터마이징
+## Customization
 
-포크해서 다른 이야기/다른 회사로 바꾸고 싶다면, 아래 파일들만 건드리면
-됩니다. 전부 값만 바꾸는 파일이라 로직을 몰라도 됩니다.
+To fork the project and adapt it into a different story or company, you only need
+to edit the files below. They contain configuration values only, so you do not
+need to understand the application logic.
 
-| 뭘 바꾸고 싶은지 | 어디를 고치는지 |
+| What You Want to Change | Where to Change It |
 |---|---|
-| 회사 이름, 방문자 호칭, "249" 자리 번호 등 정체성 값 | `src/config/site.ts` |
-| 메시지 사이 간격, 각 연출의 타이밍 | `src/config/timing.ts` |
-| 서버 로고에 거는 깃헙 링크, 배포 도메인(`site_url`) | 프로젝트 루트의 `omongate.conf` (`key=value` 형식. TS 코드 수정 없이 텍스트만 고치면 되지만, **재빌드는 필요**합니다) |
-| 등장인물 이름 · 아바타 색 · 아바타 이미지 | `src/content/personas.ts` — `avatarImage`에 이미지 경로를 넣으면 이니셜 대신 사진이 나옵니다 |
-| 채널 라벨 · 주제 · 타이핑 표시줄 문구 | `src/content/channelMeta.ts` |
-| 색상 팔레트 | `src/styles/tokens.ts` |
-| 진행 상태 저장 방식(기본값: 쿠키) | `src/services/progress.ts` |
+| Identity values such as the company name, visitor label, and seat number "249" | `src/config/site.ts` |
+| Message intervals and sequence timing | `src/config/timing.ts` |
+| GitHub link attached to the server logo and deployment domain (`site_url`) | `omongate.conf` in the project root (`key=value` format. You only need to edit the text without changing any TypeScript code, but **a rebuild is required**) |
+| Character names, avatar colors, and avatar images | `src/content/personas.ts` — set an image path in `avatarImage` to display a picture instead of initials |
+| Channel labels, topics, and typing indicator text | `src/content/channelMeta.ts` |
+| Color palette | `src/styles/tokens.ts` |
+| Progress storage method (default: cookies) | `src/services/progress.ts` |
 
-각 파일을 어떻게 고치는지 더 구체적인 절차는 `ARCHITECTURE.md`의
-"자주 하는 작업"에 있습니다.
+For more detailed instructions on how to edit each file, see "Common Tasks" in
+`ARCHITECTURE.md`.
 
-이미지(아바타, 깃헙 아이콘 등)는 `public/` 폴더에 넣고 `/파일명.svg`처럼
-루트 기준 경로로 참조하면 됩니다.
+Place images such as avatars and the GitHub icon in the `public/` folder, then
+reference them using root-relative paths such as `/filename.svg`.
 
-`omongate.conf`의 `site_url`을 실제 배포 도메인으로 채워두면, 빌드할 때
-`robots.txt`/`sitemap.xml`이 그 도메인으로 자동 생성됩니다(`dist/`에
-포함). 비워두면 `https://example.com`이 자리표시자로 들어갑니다.
+When `site_url` in `omongate.conf` is set to the actual deployment domain,
+`robots.txt` and `sitemap.xml` are automatically generated for that domain during
+the build and included in `dist/`. If it is left empty,
+`https://example.com` is used as a placeholder.
 
-## 코드 어디서부터 봐야 하나
+## Where to Start Reading the Code
 
-`npm run dev`로 화면을 먼저 띄워보고, 코드를 고치기 전에
-[ARCHITECTURE.md](./ARCHITECTURE.md)를 읽으세요. "새 채널 추가하려면 뭘
-고쳐야 하나" 같은 실제 작업 단위로 정리되어 있습니다. 요약하면:
+First, run `npm run dev` and look through the interface. Before modifying the
+code, read [ARCHITECTURE.md](./ARCHITECTURE.md). It is organized around practical
+tasks such as "what needs to be changed to add a new channel?" In summary:
 
-- `src/domain/` — 이야기 진행 상태와 그 전이 규칙 (React 없음)
-- `src/domain/view/` — 그 상태를 "지금 화면에 뭘 보여줄지"로 변환
-- `src/config/` — 정체성 값·타이밍 값 (위 "커스터마이징" 참고)
-- `src/content/` — 채널 문구, 등장인물 아바타/이름 같은 정적 데이터
-- `src/components/` — 실제로 그려지는 것들 (`channels/`가 각 채널 화면, `layout/`이 디스코드 껍데기, `AppShell`이 데스크톱/모바일 중 선택)
-- `src/hooks/` — 타이밍 연출(지연 메시지, 엔딩 시퀀스 등)을 처리하는 곳
+- `src/domain/` — Story progression state and transition rules (no React)
+- `src/domain/view/` — Converts the state into "what should be shown on screen now"
+- `src/config/` — Identity and timing values (see "Customization" above)
+- `src/content/` — Static data such as channel text and character avatars/names
+- `src/components/` — Everything that is actually rendered (`channels/` contains each channel screen, `layout/` contains the Discord-style shell, and `AppShell` chooses between desktop and mobile)
+- `src/hooks/` — Handles timed sequences such as delayed messages and the ending sequence
 
-## 개발자 편의성
-ChannelSideBar.tsx에 resetPageCookie라는 함수 호출.
+## Developer Convenience
 
-- omongate.conf에서 DEV_MODE=true 설정 시 UI의 ChannelSideBar 유저 프로필에 새로고침 버튼 노출.
-- 세션 쿠키 리셋 후 새로고침.# omongate
+When contributing to the project or adjusting its sequences, you can enable
+developer mode to avoid manually clearing story progress every time.
 
-Omong이라는 회사의 채용 공고인 척하는 디스코드 클론 UI. 실제로는 겉보기엔
-평범한 HR 안내가 채널을 넘나들며 조금씩 다른 의미로 읽히게 되는 짧은
-인터랙티브 픽션입니다.
-
-## 뭘 볼 수 있나
-
-왼쪽 채널 목록:
-
-| 채널 | 내용 |
-|---|---|
-| `#공지사항` | 채용 공고. 처음엔 그냥 좋은 조건의 채용글로 보입니다. |
-| `#지원서제출` | 실제 지원자들의 대화 스레드. |
-| `#규칙` | 입사자 매뉴얼. 다른 아카이브 채널을 열어볼수록 여기에 주석이 하나씩 붙습니다. |
-| `#archive-2025` / `#archive-2024` / `#archive-2023` / `#archive-2022` / `#archive-2021` | 보관된(퇴사자가 남긴) 채널들. 순서 상관없이 아무거나 먼저 열어도 됩니다. |
-| `#archive-당신` | 위 다섯 채널을 전부 열어야 잠금이 풀립니다. |
-
-다섯 개의 archive 채널을 모두 확인하면 `#archive-당신`이 열리고, 그 안의 대화가
-끝나면 사이트 전체가 살짝 다른 상태로 바뀝니다. 어떤 채널을 봤는지, 엔딩까지
-갔는지는 쿠키에 저장되어 새로고침해도 유지됩니다 — 쿠키를 지우면 처음부터
-다시 시작합니다. `ARCHITECTURE.md`의 "영속성" 참고.
-
-데스크톱은 서버 레일 + 채널 목록 + 채팅 + 멤버 목록 4단 레이아웃, 뷰포트가
-좁아지면(768px 기준) 채널 목록 ⇄ 채팅을 오가는 모바일 레이아웃으로 자동
-전환됩니다.
-
-## 실행하기
-
-```bash
-npm install
-npm run dev       # http://localhost:5173 개발 서버
-npm run build     # 타입 체크 + dist/ 프로덕션 빌드
-npm run preview   # 빌드 결과물 로컬 미리보기
-```
-
-Node 20 이상 필요.
-
-## 커스터마이징
-
-포크해서 다른 이야기/다른 회사로 바꾸고 싶다면, 아래 파일들만 건드리면
-됩니다. 전부 값만 바꾸는 파일이라 로직을 몰라도 됩니다.
-
-| 뭘 바꾸고 싶은지 | 어디를 고치는지 |
-|---|---|
-| 회사 이름, 방문자 호칭, "249" 자리 번호 등 정체성 값 | `src/config/site.ts` |
-| 메시지 사이 간격, 각 연출의 타이밍 | `src/config/timing.ts` |
-| 서버 로고에 거는 깃헙 링크, 배포 도메인(`site_url`) | 프로젝트 루트의 `omongate.conf` (`key=value` 형식. TS 코드 수정 없이 텍스트만 고치면 되지만, **재빌드는 필요**합니다) |
-| 등장인물 이름 · 아바타 색 · 아바타 이미지 | `src/content/personas.ts` — `avatarImage`에 이미지 경로를 넣으면 이니셜 대신 사진이 나옵니다 |
-| 채널 라벨 · 주제 · 타이핑 표시줄 문구 | `src/content/channelMeta.ts` |
-| 색상 팔레트 | `src/styles/tokens.ts` |
-| 진행 상태 저장 방식(기본값: 쿠키) | `src/services/progress.ts` |
-
-각 파일을 어떻게 고치는지 더 구체적인 절차는 `ARCHITECTURE.md`의
-"자주 하는 작업"에 있습니다.
-
-이미지(아바타, 깃헙 아이콘 등)는 `public/` 폴더에 넣고 `/파일명.svg`처럼
-루트 기준 경로로 참조하면 됩니다.
-
-`omongate.conf`의 `site_url`을 실제 배포 도메인으로 채워두면, 빌드할 때
-`robots.txt`/`sitemap.xml`이 그 도메인으로 자동 생성됩니다(`dist/`에
-포함). 비워두면 `https://example.com`이 자리표시자로 들어갑니다.
-
-## 코드 어디서부터 봐야 하나
-
-`npm run dev`로 화면을 먼저 띄워보고, 코드를 고치기 전에
-[ARCHITECTURE.md](./ARCHITECTURE.md)를 읽으세요. "새 채널 추가하려면 뭘
-고쳐야 하나" 같은 실제 작업 단위로 정리되어 있습니다. 요약하면:
-
-- `src/domain/` — 이야기 진행 상태와 그 전이 규칙 (React 없음)
-- `src/domain/view/` — 그 상태를 "지금 화면에 뭘 보여줄지"로 변환
-- `src/config/` — 정체성 값·타이밍 값 (위 "커스터마이징" 참고)
-- `src/content/` — 채널 문구, 등장인물 아바타/이름 같은 정적 데이터
-- `src/components/` — 실제로 그려지는 것들 (`channels/`가 각 채널 화면, `layout/`이 디스코드 껍데기, `AppShell`이 데스크톱/모바일 중 선택)
-- `src/hooks/` — 타이밍 연출(지연 메시지, 엔딩 시퀀스 등)을 처리하는 곳
-
-## 개발자 편의성
-기여를 하거나 연출을 수정할 때 이야기 진행 상태를 매번 수동으로 지우기 번거롭다면, 개발자 모드를 켜서 사용할 수 있습니다.
-
-- 프로젝트 루트의 omongate.conf 파일에 DEV_MODE=true를 설정합니다. (수정 후 재빌드/재실행 필요)
-- 설정이 적용되면 좌측 하단 유저 프로필 영역(ChannelSideBar.tsx)에 초기화 버튼이 새로 나타납니다.
-- 이 버튼을 클릭하면 현재 저장된 모든 진행 상태 쿠키가 즉시 리셋되고 페이지가 새로고침되어, 언제든 처음 상태부터 다시 테스트할 수 있습니다.
+- Set `DEV_MODE=true` in the `omongate.conf` file in the project root. A rebuild
+  or restart is required after making the change.
+- Once the setting is applied, a reset button appears in the user profile area at
+  the bottom left of `ChannelSideBar.tsx`.
+- Clicking the button immediately resets all currently stored progress cookies
+  and reloads the page, allowing you to test again from the initial state at any
+  time.

@@ -1,157 +1,175 @@
-# 아키텍처
+# Architecture
 
-이 문서는 코드를 고치기 전에 "어디를 봐야 하는지, 뭘 고치면 되는지"를
-알려주기 위한 것입니다. 뭘 하고 싶은지에 따라 아래에서 해당 절만 읽으면
-됩니다.
+This document is intended to tell you "where to look and what to change" before
+modifying the code. Depending on what you want to do, you only need to read the
+relevant section below.
 
-## 한 장 요약
-
-```
-사용자 조작 → StoryCommands → storyReducer → StoryState → buildViewModel() → StoryViewModel → 컴포넌트 렌더링
-```
-
-- **StoryState** (`src/domain/state.ts`) — 지금까지 어떤 채널을 봤는지, 어떤
-  연출이 재생 중인지 등 이야기 진행 전체를 담은 하나의 객체.
-- **storyReducer** (`src/domain/reducer.ts`) — `(state, action) => 새 state`.
-  상태가 바뀌는 곳은 여기 하나뿐입니다.
-- **buildViewModel()** (`src/domain/view/index.ts`) — StoryState 필드를 조합·해석해
-  컴포넌트가 바로 쓸 수 있는 형태(라벨, 카운트, 툴팁 문구 등)로 변환.
-- **StoryCommands** (`src/hooks/useStoryEngine.ts`) — 컴포넌트가 호출하는
-  함수 묶음(`goA2023()`, `toggleFear()` 등). 내부적으로 액션을 디스패치하고,
-  필요하면 지연 연출을 예약합니다.
-- 컴포넌트는 `useStory()`로 `{ state, view, commands }`를 받습니다. 여러 필드를
-  조합하거나 해석해야 하는 값(카운트, 문구, 툴팁 표시 여부 등)은 `view.xxx`를
-  읽고, `state.a2025DelayedShown`처럼 이름 그대로 켜고 끄기만 하는 단순 플래그는
-  `state.xxx`를 직접 읽습니다. `commands.xxx()`로 명령을 내립니다.
-
-## 폴더별 역할
+## At a Glance
 
 ```
-src/domain/              이야기 로직 — React·DOM·타이머 없음
-  state.ts                  StoryState 형태 + 초기값
-  actions.ts                가능한 모든 상태 전이(StoryAction)
-  reducer.ts                storyReducer — 상태가 바뀌는 유일한 곳
-  channels.ts               채널 id 목록 + 아카이브 채널 판별
-  view/                     StoryState → "지금 뭘 보여줄지" 변환
-    nav.ts                    사이드바 채널 목록 (활성/잠김/안읽음 점)
-    header.ts                 채팅 상단 라벨/주제/입력창 문구
-    rules.ts                  #규칙 채널의 주석·README 카드 내용
-    reactions.ts              이모지 리액션(😨👀☔) 상태
-    archives.ts               archive 채널들의 지연 메시지/시퀀스
-    ending.ts                 멤버 목록·사이드바 상태·엔딩 연출 플래그
-    messages.ts               "새 메시지 도착" 배너 표시 여부
+User action → StoryCommands → storyReducer → StoryState → buildViewModel() → StoryViewModel → component rendering
+```
+
+- **StoryState** (`src/domain/state.ts`) — A single object that contains the entire
+  story progression state, such as which channels have been viewed and which
+  sequence is currently playing.
+- **storyReducer** (`src/domain/reducer.ts`) — `(state, action) => new state`.
+  This is the only place where state changes.
+- **buildViewModel()** (`src/domain/view/index.ts`) — Combines and interprets
+  StoryState fields, then converts them into a form components can use directly
+  (labels, counts, tooltip text, and so on).
+- **StoryCommands** (`src/hooks/useStoryEngine.ts`) — A collection of functions
+  called by components (`goA2023()`, `toggleFear()`, and so on). Internally, they
+  dispatch actions and schedule delayed sequences when necessary.
+- Components receive `{ state, view, commands }` through `useStory()`. Values that
+  require combining or interpreting multiple fields, such as counts, text, or
+  tooltip visibility, should be read from `view.xxx`. Simple flags that are only
+  turned on or off exactly as their names suggest, such as
+  `state.a2025DelayedShown`, should be read directly from `state.xxx`.
+  Use `commands.xxx()` to issue commands.
+
+## Responsibilities by Folder
+
+```
+src/domain/              Story logic — no React, DOM, or timers
+  state.ts                  StoryState shape + initial values
+  actions.ts                All possible state transitions (StoryAction)
+  reducer.ts                storyReducer — the only place where state changes
+  channels.ts               Channel ID list + archive channel detection
+  view/                     Converts StoryState into "what should be shown now"
+    nav.ts                    Sidebar channel list (active/locked/unread dot)
+    header.ts                 Chat header label/topic/input placeholder
+    rules.ts                  Annotation and README card content for the #규칙 channel
+    reactions.ts              Emoji reaction states (😨👀☔)
+    archives.ts               Delayed messages/sequences for archive channels
+    ending.ts                 Member list/sidebar state/ending sequence flags
+    messages.ts               Whether to show the "new message" banner
 
 src/config/
-  site.ts                    서버 이름, 방문자 표시 이름, "249" 자리 번호 같은
-                              정체성 값 한 곳에 모아둔 곳 (SITE_CONFIG)
-  timing.ts                  모든 지연/유지 시간(ms)·스크롤 문턱값(px) 한 곳에
-                              모아둔 곳 (TIMING) — 각 컨트롤러는 여기서 값을
-                              가져다 쓰기만 함
+  site.ts                    Centralized identity values such as the server name,
+                              visitor display name, and seat number "249"
+                              (SITE_CONFIG)
+  timing.ts                  Centralized delay/duration values (ms) and scroll
+                              threshold values (px) (TIMING) — each controller
+                              only reads values from here
 
-src/content/              정적 문구 — 채널 라벨/주제(channelMeta.ts),
-                          말하는 사람들의 아바타 색·이니셜(personas.ts)
+src/content/              Static text — channel labels/topics (channelMeta.ts),
+                          avatar colors/initials for speakers (personas.ts)
 
-src/services/progress.ts  진행 상태를 쿠키에 저장/복원하는 함수 두 개
+src/services/progress.ts  Two functions for saving/restoring progress in cookies
                           (saveProgress/loadProgress)
 
 src/hooks/
-  useStoryEngine.ts          reducer + timeline + 아래 controller들을 묶어 StoryCommands로 노출
-  timeline.ts                이름 붙은 setTimeout/setInterval, dispose() 하나로 정리
-  controllers/               타이머로 진행되는 연출 하나당 파일 하나. dispatch/timeline/stateRef를
-                              첫 인자로 받는 평범한 함수들 (endingSequence.ts만 예외 — 재생 여부를
-                              기억하는 내부 상태가 있어서 팩토리 형태 유지)
-    endingSequence.ts           archive-당신 대화 재생 + 마무리 연출
-    archiveEntry.ts              채널 전환 인트로 + 지연된 후속 메시지
-    lockToast.ts                 자동으로 사라지는 "잠김" 토스트
-  useIsMobile.ts / useMediaQuery.ts   반응형 브레이크포인트 감지
+  useStoryEngine.ts          Combines the reducer + timeline + controllers below
+                              and exposes them as StoryCommands
+  timeline.ts                Named setTimeout/setInterval entries, all cleaned up
+                              through a single dispose()
+  controllers/               One file per timer-driven sequence. Plain functions
+                              that receive dispatch/timeline/stateRef as their first
+                              arguments (endingSequence.ts is the only exception —
+                              it retains factory form because it has internal state
+                              that remembers whether playback is active)
+    endingSequence.ts           Plays the archive-당신 conversation + final sequence
+    archiveEntry.ts              Channel transition intro + delayed follow-up message
+    lockToast.ts                 Auto-dismissing "locked" toast
+  useIsMobile.ts / useMediaQuery.ts   Responsive breakpoint detection
 
-src/context/StoryContext.tsx     <StoryProvider> + useStory() 훅
+src/context/StoryContext.tsx     <StoryProvider> + useStory() hook
 
 src/components/
-  primitives/                범용 부품 (Avatar, Tooltip, InfoCard, ReactionPill …)
-  chat/                      채팅 형태 조각 (Message, ArchivedHeader)
-  layout/                    디스코드 껍데기
-    AppShell.tsx                화면 폭에 따라 Desktop/MobileShell 중 선택
-    DesktopShell.tsx             서버 레일 + 사이드바 + 채팅 + 멤버 목록
-    MobileShell.tsx              채널 목록 ⇄ 채팅 단일 화면 + 멤버 드로어
-    MessagePane.tsx               두 셸이 공유하는 스크롤 메시지 영역
-  channels/                  채널별 컴포넌트 + ChannelRegistry(전환 테이블)
+  primitives/                Reusable parts (Avatar, Tooltip, InfoCard, ReactionPill …)
+  chat/                      Chat-style pieces (Message, ArchivedHeader)
+  layout/                    Discord-style shell
+    AppShell.tsx                Chooses DesktopShell/MobileShell based on viewport width
+    DesktopShell.tsx             Server rail + sidebar + chat + member list
+    MobileShell.tsx              Single-screen channel list ⇄ chat + member drawer
+    MessagePane.tsx               Scrollable message area shared by both shells
+  channels/                  Per-channel components + ChannelRegistry (switch table)
 
-src/styles/tokens.ts         모든 색상을 역할별로 이름 붙인 곳
+src/styles/tokens.ts         All colors named by their semantic roles
 ```
 
-## 자주 하는 작업
+## Common Tasks
 
-**새 채널을 추가하려면**
-1. `src/domain/channels.ts`의 `ChannelId`에 id 추가
-2. 사이드바에 항목이 필요하면 `src/domain/view/nav.ts`에 케이스 추가
-3. `src/components/channels/`에 채널 컴포넌트 작성
-4. `src/components/channels/ChannelRegistry.tsx`에 한 줄 추가
+**To add a new channel**
+1. Add the ID to `ChannelId` in `src/domain/channels.ts`
+2. If it needs a sidebar entry, add a case in `src/domain/view/nav.ts`
+3. Create the channel component in `src/components/channels/`
+4. Add one line to `src/components/channels/ChannelRegistry.tsx`
 
-**새 서사 플래그나 시간차 연출을 추가하려면**
-1. `StoryState`(`domain/state.ts`)에 필드 추가
-2. 그 필드를 바꾸는 액션(`domain/actions.ts`) + reducer 케이스(`domain/reducer.ts`) 추가
-3. 컴포넌트가 이름 그대로 켜고 끄기만 하면 되면 `state.그필드`를 바로 읽으면
-   됩니다. 다른 필드와 조합하거나 텍스트로 가공해야 하면 그때 해당
-   `domain/view/*.ts`에 파생 필드로 추가하세요.
-4. 지연이 필요하면 관련 컨트롤러(`hooks/controllers/`) 안에서 `Timeline.after`/`every`로 예약. 시간 값은 하드코딩하지 말고 `src/config/timing.ts`의 `TIMING`에 이름 붙여 추가한 뒤 가져다 씁니다. 완전히 새로운 독립된 연출이면 컨트롤러 파일을 새로 만들어도 됩니다.
+**To add a new story flag or timed sequence**
+1. Add a field to `StoryState` (`domain/state.ts`)
+2. Add an action that changes the field (`domain/actions.ts`) and a reducer case
+   (`domain/reducer.ts`)
+3. If the component only turns the field on or off exactly as its name suggests,
+   read `state.theField` directly. If it needs to be combined with other fields or
+   transformed into text, add it as a derived field in the relevant
+   `domain/view/*.ts` file.
+4. If a delay is required, schedule it with `Timeline.after`/`every` inside the
+   relevant controller (`hooks/controllers/`). Do not hardcode timing values.
+   Add a named value to `TIMING` in `src/config/timing.ts`, then import and use it.
+   If it is a completely new and independent sequence, you may create a new
+   controller file.
 
-**메시지 사이 간격·전체 호흡을 조정하려면**
-`src/config/timing.ts`의 `TIMING` 값만 바꾸면 됩니다 — 채널 전환 인트로 길이,
-지연 메시지 간격, archive-당신 대사 틱 간격, 엔딩 연출 각 단계 타이밍, "잠김"
-토스트 유지 시간, "새 메시지" 배너/구분선이 사라지기까지의 유예 시간 등 이
-앱의 모든 타이밍이 여기 한 곳에 모여 있습니다. 개별 컨트롤러 파일에 흩어
-놓지 않은 이유는 실제로 값이 흩어져 있었을 때 근처 주석과 실제 값이
-어긋나는 문제(예: "매 1.6초"라고 적힌 주석 옆에 실제로는 3.2초짜리 상수가
-있던 사례)가 있었기 때문입니다.
+**To adjust message spacing or the overall pacing**
+Change only the `TIMING` values in `src/config/timing.ts` — all timing values in
+this app are centralized there, including channel transition intro duration,
+delayed message intervals, archive-당신 dialogue tick intervals, each step of the
+ending sequence, "locked" toast duration, and the grace period before the
+"new message" banner/divider disappears.
 
-**회사 이름·방문자 호칭·자리 번호를 바꾸려면**
-`src/config/site.ts`의 `SITE_CONFIG` 값만 바꾸면 됩니다 — 사이드바 서버명,
-공지사항 본문, 각 아카이브 채널의 "249번 자리"/"멤버 249명" 표현, 리액션
-카운트, 익명 사용자 이름 등이 전부 이 객체에서 값을 가져다 씁니다. 단,
-`currentUserName`/`unknownUserName`에 붙는 한국어 조사(은/는, 이/가, 라는
-등)는 기본값 "지원자"처럼 모음으로 끝나는 이름을 전제로 붙어있으므로,
-자음으로 끝나는 이름으로 바꾸면 몇몇 문장의 조사를 손으로 고쳐야 합니다.
+**To change the company name, visitor label, or seat number**
+Change only the `SITE_CONFIG` values in `src/config/site.ts` — the sidebar server
+name, announcement body, each archive channel's "249번 자리" ("Seat 249") /
+"멤버 249명" ("249 members") expressions, reaction counts, anonymous user name,
+and related values all come from this object.
 
-**새 색상을 추가하려면**
-`src/styles/tokens.ts`에 "무엇을 위한 색인지"로 이름 붙여 추가하고 거기서
-가져다 씁니다. `grep -rn "oklch(" src`를 이 파일 밖에서 돌렸을 때 항상
-아무것도 안 나와야 합니다.
+**To add a new color**
+Add it to `src/styles/tokens.ts` and name it after what the color is used for,
+then import it from there. Running `grep -rn "oklch(" src` outside this file
+should always return no results.
 
-**진행 상태 저장 방식을 바꾸려면**
-`src/services/progress.ts`의 `saveProgress`/`loadProgress` 함수 두 개가
-전부입니다. 기본은 쿠키(어떤 archive를 봤는지, 엔딩까지 갔는지를 저장해
-새로고침·재방문에도 유지). 저장소를 바꾸고 싶으면 이 두 함수 안의
-`document.cookie` 부분만 고치면 됩니다. `useStoryEngine.ts`가 이 함수들을
-직접 import해서 쓰므로 그 외에는 손댈 곳이 없습니다.
-저장 대상은 `StoryState` 전체가 아니라 `extractProgress()`가 뽑아내는
-서사 진행 관련 필드(방문한 archive, 지연 메시지 표시 여부, 엔딩 도달 여부
-등)뿐입니다 — hover/스크롤 위치 같은 화면 전용 상태는 저장하지 않습니다.
-저장 대상을 늘리려면 `SavedProgress` 인터페이스와 `extractProgress()`에
-필드를 추가하세요.
+**To change how progress is stored**
+The two functions in `src/services/progress.ts`, `saveProgress` and
+`loadProgress`, are the only places you need to change. Cookies are used by
+default to store which archives have been viewed and whether the ending has been
+reached, so progress persists across refreshes and return visits. To use a
+different storage mechanism, change only the `document.cookie` sections inside
+these two functions. `useStoryEngine.ts` imports these functions directly, so
+nothing else needs to be modified.
+The stored data is not the entire `StoryState`; it only includes story progression
+fields extracted by `extractProgress()`, such as visited archives, delayed
+message visibility, and whether the ending has been reached. View-only state,
+such as hover state or scroll position, is not stored. To store additional fields,
+add them to the `SavedProgress` interface and `extractProgress()`.
 
-**반응형 레이아웃을 손보려면**
-`useIsMobile()`이 뷰포트 768px를 기준으로 `AppShell`이 `DesktopShell`/`MobileShell`
-중 뭘 렌더링할지 정합니다. 두 셸 모두 `ChannelSidebar`/`ChatHeader`/`MemberList`를
-그대로 재사용하며, `fullScreen`/`onBack`/`onToggleMembers`/`width` 같은 prop으로
-맥락만 바꿉니다. "지금 채널 목록이 보이는지 채팅이 보이는지"(`MobileShell`의
-`panel`/`membersOpen`) 같은 화면 전환 상태는 이야기와 무관하므로 `StoryState`가
-아니라 그냥 `useState`로 처리되어 있습니다.
+**To modify the responsive layout**
+`useIsMobile()` uses a viewport width of 768px as the breakpoint, and `AppShell`
+chooses whether to render `DesktopShell` or `MobileShell`. Both shells reuse the
+same `ChannelSidebar`/`ChatHeader`/`MemberList` components and only change their
+context through props such as `fullScreen`/`onBack`/`onToggleMembers`/`width`.
+Screen transition state such as whether the channel list or chat is currently
+visible (`panel`/`membersOpen` in `MobileShell`) is unrelated to the story, so it
+is handled with ordinary `useState` rather than `StoryState`.
 
-## 브라우저 없이 동작 확인하기
+## Verifying Behavior Without a Browser
 
-테스트 러너가 따로 없습니다. 브라우저가 없는 환경에서 로직을 확인해야 하면:
+There is no dedicated test runner. To verify the logic in an environment without
+a browser:
 
 ```bash
-npx vite build --ssr <임시 진입점>.tsx --outDir dist-ssr-smoke --emptyOutDir
-node dist-ssr-smoke/<임시 진입점>.js
+npx vite build --ssr <temporary-entry-point>.tsx --outDir dist-ssr-smoke --emptyOutDir
+node dist-ssr-smoke/<temporary-entry-point>.js
 ```
 
-진입점 스크립트에서 `[...actions].reduce(storyReducer, initialStoryState)`로
-원하는 상태를 직접 만들고, `buildViewModel()`에 통과시킨 뒤,
-`StoryContext.Provider`(현재 `context/StoryContext.tsx`에서 export되어
-있음)에 그 값을 넣어 `react-dom/server`의 `renderToStaticMarkup`으로 실제
-컴포넌트 트리를 렌더링하면 됩니다. reducer, view 파생 로직, JSX를 실제
-타이머/DOM 측정 없이 그대로 실행해보는 방법이라, 렌더 크래시나 "이 아카이브를
-본 뒤에 저 주석이 실제로 나타나는가" 같은 서사 연결 문제를 잡아낼 수
-있습니다. 확인 후 임시 진입점 파일과 `dist-ssr-smoke/`는 지우세요.
+In the entry-point script, create the desired state directly with
+`[...actions].reduce(storyReducer, initialStoryState)`, pass it through
+`buildViewModel()`, then provide the result to `StoryContext.Provider` (currently
+exported from `context/StoryContext.tsx`) and render the actual component tree
+with `renderToStaticMarkup` from `react-dom/server`.
+
+This allows you to execute the reducer, derived view logic, and JSX as-is without
+real timers or DOM measurements, making it possible to catch rendering crashes
+or story continuity issues such as "does that annotation actually appear after
+this archive has been viewed?" After verification, delete the temporary
+entry-point file and `dist-ssr-smoke/`.
