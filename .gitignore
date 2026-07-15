@@ -26,4 +26,5 @@ reference/*
 *.njsproj
 *.sln
 *.sw?
+public/custom/*
 deploy.sh
