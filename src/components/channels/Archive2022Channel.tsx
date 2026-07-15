@@ -25,7 +25,7 @@ export function Archive2022Channel() {
         승인되었습니다.
         <div style={{ marginTop: 10 }}>
           <InfoCard icon="🏖️">
-{`신청자: 윤태호
+{`신청자: ${YOON_TAEHO.name}
 시작일: 2022년 12월 30일
 종료일: 후임자 입사 전날
 결재자: ${SITE_CONFIG.currentUserName}
@@ -39,8 +39,8 @@ export function Archive2022Channel() {
       <Message persona={HR_BOT} time="오후 3:12" dense>
         휴가 종료 전에 안내드리겠습니다.
       </Message>
-      <SystemLine>윤태호 님의 휴가가 시작되었습니다.</SystemLine>
-      <SystemLine>윤태호 님이 퇴사 처리되었습니다.</SystemLine>
+      <SystemLine>{YOON_TAEHO.name} 님의 휴가가 시작되었습니다.</SystemLine>
+      <SystemLine>{YOON_TAEHO.name} 님이 퇴사 처리되었습니다.</SystemLine>
 
       <Message persona={PR_BOT} time="방금" dense>
         <CodeBlock fontSize={12.5}>

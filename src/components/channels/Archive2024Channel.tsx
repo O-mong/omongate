@@ -41,7 +41,7 @@ export function Archive2024Channel() {
         <CodeBlock fontSize={12.5}>
 {`11:59:59  식당 출입문 잠금 해제
 12:00:00  ${SITE_CONFIG.deskNumber}번 좌석 배식 완료
-12:00:01  한유라 사원증 태그
+12:00:01  ${HAN_YURA.name} 사원증 태그
 12:00:01  출입 거부
 12:00:01  식당 출입문 잠금`}
         </CodeBlock>
@@ -90,14 +90,14 @@ export function Archive2024Channel() {
         휴가 신청서를 확인해 주세요.
         <div style={{ marginTop: 8 }}>
           <InfoCard icon="🏖️">
-{`신청자: 한유라
+{`신청자: ${HAN_YURA.name}
 신청일: 내일
 휴가 시작: 다음 주 월요일
 휴가 종료: 후임자 입사 전날
 결재 상태: 승인
 결재자: 없음
 작성 위치: 7층 화장실 거울 앞
-서명: 한유라`}
+서명: ${HAN_YURA.name}`}
           </InfoCard>
         </div>
       </Message>
@@ -111,12 +111,12 @@ export function Archive2024Channel() {
         그럼 거울 속 사람이 신청한 건가요?
       </Message>
       <Message persona={HR_BOT} time="오후 12:09" dense>
-        신청자는 한유라님 한 분입니다.
+        신청자는 {HAN_YURA.name}님 한 분입니다.
       </Message>
 
       <Divider>두 번째 배식 기록</Divider>
 
-      <SystemLine>12:00:02 한유라 사원증 태그</SystemLine>
+      <SystemLine>{`12:00:02 ${HAN_YURA.name} 사원증 태그`}</SystemLine>
       <SystemLine>12:00:02 식당 출입 승인</SystemLine>
       <SystemLine>{`12:00:03 ${SITE_CONFIG.deskNumber}번 좌석 배식 완료`}</SystemLine>
 
@@ -130,7 +130,7 @@ export function Archive2024Channel() {
         누가 먹고 있는 건데요?
       </Message>
       <Message persona={HR_BOT} time="오후 12:10" dense>
-        정상 출근 중인 한유라님입니다.
+        정상 출근 중인 {HAN_YURA.name}님입니다.
       </Message>
       <Message persona={HAN_YURA} time="오후 12:11" dense>
         그럼 저는 누구죠?
@@ -142,8 +142,8 @@ export function Archive2024Channel() {
       <Divider>오후 기록</Divider>
 
       <SystemLine>13:00:00 점심시간 종료</SystemLine>
-      <SystemLine>13:00:01 한유라 님이 자리로 복귀했습니다.</SystemLine>
-      <SystemLine>13:00:01 한유라 님의 휴가가 시작되었습니다.</SystemLine>
+      <SystemLine>{`13:00:01 ${HAN_YURA.name} 님이 자리로 복귀했습니다.`}</SystemLine>
+      <SystemLine>{`13:00:01 ${HAN_YURA.name} 님의 휴가가 시작되었습니다.`}</SystemLine>
       <SystemLine>13:00:02 현재 휴가 신청자 0명</SystemLine>
 
       <Message persona={HAN_YURA} time="오후 1:00" dense>
@@ -177,7 +177,7 @@ export function Archive2024Channel() {
       )}
       {state.a2024DelayedShown2 && (
         <Message persona={HAN_YURA} time="방금" dense>
-          거울 쪽 한유라는 아직 점심을 먹지 않았어요.
+          거울 쪽 {HAN_YURA.name}는 아직 점심을 먹지 않았어요.
         </Message>
       )}
     </div>

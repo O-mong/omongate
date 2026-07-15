@@ -1,5 +1,5 @@
 import { SITE_CONFIG } from '../../config/site'
-import { PARK_SEOYEON } from '../../content/personas'
+import { OH_SEJIN, PARK_SEOYEON, YOON_TAEHO } from '../../content/personas'
 import type { HoverKey, StoryState } from '../state'
 
 export interface ReactionViewModel {
@@ -59,7 +59,7 @@ export function deriveReactions(state: StoryState): ReactionsViewModel {
       active: true,
       count: 1,
       tooltipShown: isHovered(state, 'a23wave'),
-      tooltipText: '오세진 님이 반응했습니다.',
+      tooltipText: `${OH_SEJIN.name} 님이 반응했습니다.`,
     },
     a2022: {
       active: !state.a2022React0,
@@ -67,7 +67,7 @@ export function deriveReactions(state: StoryState): ReactionsViewModel {
       tooltipShown: isHovered(state, 'a22react'),
       tooltipText: state.a2022ReactNote
         ? '재직 상태가 확인되지 않는 반응은 취소할 수 없습니다.'
-        : `윤태호님, 정민수님, 외 ${SITE_CONFIG.deskNumber - 3}명… 그리고 ${SITE_CONFIG.currentUserName}님이 확인했습니다.`,
+        : `${YOON_TAEHO.name}님, 정민수님, 외 ${SITE_CONFIG.deskNumber - 3}명… 그리고 ${SITE_CONFIG.currentUserName}님이 확인했습니다.`,
     },
   }
 }

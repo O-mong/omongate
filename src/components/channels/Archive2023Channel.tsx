@@ -56,7 +56,7 @@ export function Archive2023Channel() {
 
       <Message persona={HR_BOT} time="시스템 로그" dense>
         <CodeBlock fontSize={12.5}>
-{`17:59:58  오세진 님이 7층 로비에 진입했습니다.
+{`17:59:58  ${OH_SEJIN.name} 님이 7층 로비에 진입했습니다.
 18:00:00  로비 안내 방송이 재생되었습니다.`}
         </CodeBlock>
       </Message>
@@ -78,7 +78,7 @@ export function Archive2023Channel() {
         {state.a23ReactionDetailShown && (
           <div style={{ marginTop: 8 }}>
             <CodeBlock fontSize={12.5}>
-{`반응자        오세진
+{`반응자        ${OH_SEJIN.name}
 출처          7층 로비
 입력          `}
               <span
@@ -114,7 +114,7 @@ export function Archive2023Channel() {
         그럼 왜 제 계정으로 되어 있죠?
       </Message>
       <Message persona={HR_BOT} time="오후 6:02" dense>
-        오세진님의 응답이 정상적으로 동기화되었습니다.
+        {OH_SEJIN.name}님의 응답이 정상적으로 동기화되었습니다.
       </Message>
       <Message persona={OH_SEJIN} time="오후 6:03" dense>
         로비에서 말한 것도 여기 반응으로 남는 건가요?
@@ -125,7 +125,7 @@ export function Archive2023Channel() {
 
       <Message persona={HR_BOT} time="시스템 로그" dense>
         <CodeBlock fontSize={12.5}>
-{`18:02:14  오세진 님의 퇴근 인사가 확인되었습니다.
+{`18:02:14  ${OH_SEJIN.name} 님의 퇴근 인사가 확인되었습니다.
 18:02:14  다음 출근 계정이 활성화되었습니다.`}
         </CodeBlock>
       </Message>
@@ -133,7 +133,7 @@ export function Archive2023Channel() {
       <Divider>다음 날</Divider>
 
       <SystemLine>{PARK_SEOYEON.name} 님이 오전 8:56에 로그인했습니다.</SystemLine>
-      <SystemLine>오세진 님이 오전 8:57에 로그인했습니다.</SystemLine>
+      <SystemLine>{OH_SEJIN.name} 님이 오전 8:57에 로그인했습니다.</SystemLine>
       <Message persona={OH_SEJIN} time="오전 8:58" dense>
         제 자리에 누가 앉아 있습니다.
       </Message>

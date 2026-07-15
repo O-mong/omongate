@@ -82,7 +82,7 @@ export function Archive2025Channel() {
 
       <Divider>다음 날</Divider>
 
-      <SystemLine>오전 8:56 김도윤 님이 로그인했습니다.</SystemLine>
+      <SystemLine>{`오전 8:56 ${KIM_DOYUN.name} 님이 로그인했습니다.`}</SystemLine>
       <SystemLine>오전 8:57 모니터에서 새 메모가 감지되었습니다.</SystemLine>
 
       <Message persona={HR_BOT} time="오전 8:57" dense>
