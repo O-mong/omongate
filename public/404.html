@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // GitHub Pages (and other static hosts with no path-rewrite rules) serve this file for
+      // any URL that isn't a real static file — including a direct hit or refresh on /ko/... or
+      // /en/.... Stash the path the visitor actually wanted, then bounce to "/", where the
+      // restore script in index.html puts it back before the app boots and reads
+      // window.location.pathname. Hosts with real SPA fallback (Vercel/Netlify/nginx rewrites)
+      // never serve this file at all, so it's harmless there.
+      sessionStorage.setItem('omong.redirect', location.pathname + location.search + location.hash)
+      location.replace('/')
+    </script>
+  </head>
+  <body></body>
+</html>

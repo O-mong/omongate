@@ -7,7 +7,17 @@ import { colors } from '../../styles/tokens'
 import { Avatar } from '../primitives/Avatar'
 import { RedDot } from '../primitives/Divider'
 import { SectionLabel } from './SectionLabel'
+import { DEV_MODE } from '../../config/devConfig'
 
+//For dev mode.
+//resets page cookie and refresh for user to restart and QA process
+export const resetPageCookie = (): void => {
+  document.cookie.split(';').forEach((cookie) => {
+    const cookieName = cookie.split('=')[0].trim();
+    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+  window.location.reload();
+}
 // Maps a nav item's declared intent (domain/view/nav.ts) to the actual command call,
 // the one place that has to know both vocabularies.
 function runNavAction(action: NavAction, commands: StoryCommands): void {
@@ -164,6 +174,23 @@ export function ChannelSidebar({ fullScreen = false, onNavigate }: ChannelSideba
             {ending.sidebarUserStatus}
           </span>
         </div>
+          {DEV_MODE && (
+            <button onClick={resetPageCookie}
+              style={{
+                marginLeft: 'auto',
+                padding: '4px 8px',
+                fontSize: '20px',
+                border: `1px solid ${colors.rail}`,
+                borderRadius: '4px',
+                backgroundColor: 'transparent',
+                cursor: 'pointer',
+                color: colors.text.name
+              }}
+              title="쿠키 초기화 및 새로고침"
+            >
+              🔄
+        </button>
+      )}
       </div>
     </div>
   )
